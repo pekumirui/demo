@@ -7,13 +7,67 @@ trigger:
 - master
 
 pool:
-  vmImage: ubuntu-latest
+  name: Defalut
 
+variables:
+- name: TerraformVersion
+  value: 'latest'
+- name: terraformWorkingDirectory
+  value: 'main'
+- name: ServiceConnection
+  value: 'test2'
+- name: subscription
+  value: '9cc6ba70-2e1a-4749-b09e-630c9e071f42'
 steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
+- task: TerraformInstaller@0
+  displayName: 'Install terraform $(TerraformVersion)'
+  inputs:
+    terraformVersion: $(TerraformVersion)
+- task: TerraformCLI@0
+  displayName: 'Terraform Version'
+  inputs:
+    command: 'version'
+- task: TerraformCLI@0
+  displayName: 'Terraform Format'
+  inputs:
+    command: 'fmt'
+    commandOptions: '-recursive'
+- task: TerraformCLI@0
+  displayName: 'Terraform Init'
+  inputs:
+    command: 'init'
+    workingDirectory: $(terraformWorkingDirectory)
+    backendType: 'azurerm'
+    backendServiceArm: $(ServiceConnection)
+    backendAzureRmSubscriptionId: $(subscription)
+- task: TerraformCLI@0
+  displayName: 'Terraform Validate'
+  inputs:
+    command: 'validate'
+    workingDirectory: $(terraformWorkingDirectory)
+- task: TerraformCLI@0
+  displayName: 'Terraform Plan'
+  inputs:
+    command: 'plan'
+    workingDirectory: $(terraformWorkingDirectory)
+    environmentServiceName: $(ServiceConnection)
+    providerAzureRmSubscriptionId: $(subscription)
+    publishPlanResults: '$(Build.SourceBranchName)_$(Build.BuildNumber).tfplan'
+  
+- task: TerraformCLI@0
+  displayName: 'Terraform Apply'
+  condition: and(succeeded(), eq(variables['action'], 'apply'))
+  inputs:
+    command: 'apply'
+    workingDirectory: $(terraformWorkingDirectory)
+    environmentServiceName: $(ServiceConnection)
+    providerAzureRmSubscriptionId: $(subscription)
 
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
+- task: TerraformCLI@0
+  displayName: 'Terraform Destroy'
+  condition: and(succeeded(), eq(variables['action'], 'destroy'))
+  inputs:
+    command: 'destroy'
+    workingDirectory: $(terraformWorkingDirectory)
+    environmentServiceName: $(ServiceConnection)
+    providerAzureRmSubscriptionId: $(subscription)

@@ -27,11 +27,11 @@ steps:
   displayName: 'Terraform Version'
   inputs:
     command: 'version'
-- task: TerraformCLI@0
-  displayName: 'Terraform Format'
-  inputs:
-    command: 'fmt'
-    commandOptions: '-recursive'
+#- task: TerraformCLI@0
+#  displayName: 'Terraform Format'
+#  inputs:
+#    command: 'fmt'
+#    commandOptions: '-recursive'
 - task: TerraformCLI@0
   displayName: 'Terraform Init'
   inputs:

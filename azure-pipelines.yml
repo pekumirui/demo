@@ -7,7 +7,7 @@ trigger:
 - master
 
 pool:
-  name: Defalut
+  name: Default
 
 variables:
 - name: TerraformVersion

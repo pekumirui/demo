@@ -13,7 +13,7 @@ variables:
 - name: TerraformVersion
   value: 'latest'
 - name: terraformWorkingDirectory
-  value: 'main'
+  value: 'master'
 - name: ServiceConnection
   value: 'test2'
 - name: subscription

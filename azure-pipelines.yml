@@ -36,9 +36,9 @@ steps:
   displayName: 'Terraform Init'
   inputs:
     command: 'init'
-    workingDirectory: $(terraformWorkingDirectory)
+    workingDirectory: $(System.DefaultWorkingDirectory)
     backendType: 'azurerm'
-    #backendServiceArm: $(ServiceConnection)
+    backendServiceArm: $(ServiceConnection)
     backendAzureRmSubscriptionId: $(subscription)
 - task: TerraformCLI@0
   displayName: 'Terraform Validate'

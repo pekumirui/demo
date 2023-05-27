@@ -14,8 +14,6 @@ variables:
   value: 'latest'
 - name: terraformWorkingDirectory
   value: 'master'
-- name: ServiceConnection
-  value: 'test2'
 - name: subscription
   value: '9cc6ba70-2e1a-4749-b09e-630c9e071f42'
 steps:
@@ -37,7 +35,6 @@ steps:
   inputs:
     command: 'init'
     workingDirectory: $(System.DefaultWorkingDirectory)
-    backendServiceArm: $(ServiceConnection)
 - task: TerraformCLI@0
   displayName: 'Terraform Validate'
   inputs:
@@ -48,7 +45,6 @@ steps:
   inputs:
     command: 'plan'
     workingDirectory: $(System.DefaultWorkingDirectory)
-    #environmentServiceName: $(ServiceConnection)
     publishPlanResults: '$(Build.SourceBranchName)_$(Build.BuildNumber).tfplan'
   
 - task: TerraformCLI@0
@@ -57,7 +53,6 @@ steps:
   inputs:
     command: 'apply'
     workingDirectory: $(System.DefaultWorkingDirectory)
-    #environmentServiceName: $(ServiceConnection)
 
 - task: TerraformCLI@0
   displayName: 'Terraform Destroy'
@@ -65,4 +60,3 @@ steps:
   inputs:
     command: 'destroy'
     workingDirectory: $(System.DefaultWorkingDirectory)
-    #environmentServiceName: $(ServiceConnection)

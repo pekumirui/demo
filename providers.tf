@@ -14,8 +14,8 @@ terraform {
 }
 
 provider "azurerm" {
-  use_msi   = true
-  tenant_id = "cf36141c-ddd7-45a7-b073-111f66d0b30c"
+  use_msi         = true
+  tenant_id       = "cf36141c-ddd7-45a7-b073-111f66d0b30c"
   subscription_id = "9cc6ba70-2e1a-4749-b09e-630c9e071f42"
   features {}
 }

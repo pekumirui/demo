@@ -48,7 +48,7 @@ steps:
   inputs:
     command: 'plan'
     workingDirectory: $(System.DefaultWorkingDirectory)
-    environmentServiceName: $(ServiceConnection)
+    #environmentServiceName: $(ServiceConnection)
     publishPlanResults: '$(Build.SourceBranchName)_$(Build.BuildNumber).tfplan'
   
 - task: TerraformCLI@0
@@ -57,7 +57,7 @@ steps:
   inputs:
     command: 'apply'
     workingDirectory: $(System.DefaultWorkingDirectory)
-    environmentServiceName: $(ServiceConnection)
+    #environmentServiceName: $(ServiceConnection)
 
 - task: TerraformCLI@0
   displayName: 'Terraform Destroy'
@@ -65,4 +65,4 @@ steps:
   inputs:
     command: 'destroy'
     workingDirectory: $(System.DefaultWorkingDirectory)
-    environmentServiceName: $(ServiceConnection)
+    #environmentServiceName: $(ServiceConnection)

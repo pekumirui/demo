@@ -42,14 +42,13 @@ steps:
   displayName: 'Terraform Validate'
   inputs:
     command: 'validate'
-    workingDirectory: $(terraformWorkingDirectory)
+    workingDirectory: $(System.DefaultWorkingDirectory)
 - task: TerraformCLI@0
   displayName: 'Terraform Plan'
   inputs:
     command: 'plan'
-    workingDirectory: $(terraformWorkingDirectory)
+    workingDirectory: $(System.DefaultWorkingDirectory)
     environmentServiceName: $(ServiceConnection)
-    providerAzureRmSubscriptionId: $(subscription)
     publishPlanResults: '$(Build.SourceBranchName)_$(Build.BuildNumber).tfplan'
   
 - task: TerraformCLI@0
@@ -57,15 +56,13 @@ steps:
   condition: and(succeeded(), eq(variables['action'], 'apply'))
   inputs:
     command: 'apply'
-    workingDirectory: $(terraformWorkingDirectory)
+    workingDirectory: $(System.DefaultWorkingDirectory)
     environmentServiceName: $(ServiceConnection)
-    providerAzureRmSubscriptionId: $(subscription)
 
 - task: TerraformCLI@0
   displayName: 'Terraform Destroy'
   condition: and(succeeded(), eq(variables['action'], 'destroy'))
   inputs:
     command: 'destroy'
-    workingDirectory: $(terraformWorkingDirectory)
+    workingDirectory: $(System.DefaultWorkingDirectory)
     environmentServiceName: $(ServiceConnection)
-    providerAzureRmSubscriptionId: $(subscription)

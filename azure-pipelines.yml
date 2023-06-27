@@ -1,0 +1,71 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- master
+
+pool:
+  name: Default
+
+variables:
+- name: TerraformVersion
+  value: 'latest'
+- name: terraformWorkingDirectory
+  value: 'main'
+- name: ServiceConnection
+  value: 'test2'
+- name: subscription
+  value: '9cc6ba70-2e1a-4749-b09e-630c9e071f42'
+steps:
+- task: TerraformInstaller@0
+  displayName: 'Install terraform $(TerraformVersion)'
+  inputs:
+    terraformVersion: $(TerraformVersion)
+- task: TerraformCLI@0
+  displayName: 'Terraform Version'
+  inputs:
+    command: 'version'
+- task: TerraformCLI@0
+  displayName: 'Terraform Format'
+  inputs:
+    command: 'fmt'
+    commandOptions: '-recursive'
+- task: TerraformCLI@0
+  displayName: 'Terraform Init'
+  inputs:
+    command: 'init'
+    workingDirectory: $(terraformWorkingDirectory)
+    backendType: 'azurerm'
+    backendServiceArm: $(ServiceConnection)
+    backendAzureRmSubscriptionId: $(subscription)
+- task: TerraformCLI@0
+  displayName: 'Terraform Validate'
+  inputs:
+    command: 'validate'
+    workingDirectory: $(terraformWorkingDirectory)
+- task: TerraformCLI@0
+  displayName: 'Terraform Plan'
+  inputs:
+    command: 'plan'
+    workingDirectory: $(terraformWorkingDirectory)
+    environmentServiceName: $(ServiceConnection)
+    providerAzureRmSubscriptionId: $(subscription)
+    publishPlanResults: '$(Build.SourceBranchName)_$(.BuildNuBuildmber).tfplan'
+- task: TerraformCLI@0
+  displayName: 'Terraform Apply'
+  condition: and(succeeded(), eq(variables['action'], 'apply'))
+  inputs:
+    command: 'apply'
+    workingDirectory: $(terraformWorkingDirectory)
+    environmentServiceName: $(ServiceConnection)
+    providerAzureRmSubscriptionId: $(subscription)
+- task: TerraformCLI@0
+  displayName: 'Terraform Destroy'
+  condition: and(succeeded(), eq(variables['action'], 'destroy'))
+  inputs:
+    command: 'destroy'
+    workingDirectory: $(terraformWorkingDirectory)
+    environmentServiceName: $(ServiceConnection)
+    providerAzureRmSubscriptionId: $(subscription)

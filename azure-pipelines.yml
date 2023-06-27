@@ -4,7 +4,7 @@
 # https://aka.ms/yaml
 
 trigger:
-- master
+- main
 
 pool:
   name: Default
@@ -14,8 +14,6 @@ variables:
   value: 'latest'
 - name: terraformWorkingDirectory
   value: 'main'
-- name: ServiceConnection
-  value: 'test2'
 - name: subscription
   value: '9cc6ba70-2e1a-4749-b09e-630c9e071f42'
 steps:
@@ -36,36 +34,29 @@ steps:
   displayName: 'Terraform Init'
   inputs:
     command: 'init'
-    workingDirectory: $(terraformWorkingDirectory)
-    backendType: 'azurerm'
-    backendServiceArm: $(ServiceConnection)
-    backendAzureRmSubscriptionId: $(subscription)
+    workingDirectory: $(System.DefaultWorkingDirectory)
 - task: TerraformCLI@0
   displayName: 'Terraform Validate'
   inputs:
     command: 'validate'
-    workingDirectory: $(terraformWorkingDirectory)
+    workingDirectory: $(System.DefaultWorkingDirectory)
 - task: TerraformCLI@0
   displayName: 'Terraform Plan'
   inputs:
     command: 'plan'
-    workingDirectory: $(terraformWorkingDirectory)
-    environmentServiceName: $(ServiceConnection)
-    providerAzureRmSubscriptionId: $(subscription)
-    publishPlanResults: '$(Build.SourceBranchName)_$(.BuildNuBuildmber).tfplan'
+    workingDirectory: $(System.DefaultWorkingDirectory)
+    publishPlanResults: '$(Build.SourceBranchName)_$(Build.BuildNumber).tfplan'
+  
 - task: TerraformCLI@0
   displayName: 'Terraform Apply'
   condition: and(succeeded(), eq(variables['action'], 'apply'))
   inputs:
     command: 'apply'
-    workingDirectory: $(terraformWorkingDirectory)
-    environmentServiceName: $(ServiceConnection)
-    providerAzureRmSubscriptionId: $(subscription)
+    workingDirectory: $(System.DefaultWorkingDirectory)
+
 - task: TerraformCLI@0
   displayName: 'Terraform Destroy'
   condition: and(succeeded(), eq(variables['action'], 'destroy'))
   inputs:
     command: 'destroy'
-    workingDirectory: $(terraformWorkingDirectory)
-    environmentServiceName: $(ServiceConnection)
-    providerAzureRmSubscriptionId: $(subscription)
+    workingDirectory: $(System.DefaultWorkingDirectory)
